@@ -1,0 +1,68 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  files     File[]
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Thread {
+  chatMessages ChatMessage[]
+  createdAt    DateTime      @default(now())
+  id           String        @id @default(cuid())
+  title        String?
+  updatedAt    DateTime      @updatedAt
+}
+
+model ChatMessage {
+  author    String?
+  content   String?
+  createdAt DateTime  @default(now())
+  files     File[]
+  id        String    @id @default(cuid())
+  isRead    Boolean?
+  thread    Thread?   @relation(fields: [threadId], references: [id])
+  threadId  String?
+  timestamp DateTime?
+  updatedAt DateTime  @updatedAt
+}
+
+model Datasource {
+  configField Json?
+  createdAt   DateTime                 @default(now())
+  createdBy   String?
+  id          String                   @id @default(cuid())
+  name        String?
+  typeField   EnumDatasourceTypeField?
+  types       String?
+  updatedAt   DateTime                 @updatedAt
+}
+
+model File {
+  chatMessage   ChatMessage? @relation(fields: [chatMessageId], references: [id])
+  chatMessageId String?
+  createdAt     DateTime     @default(now())
+  id            String       @id @default(cuid())
+  updatedAt     DateTime     @updatedAt
+  url           String?
+  user          User?        @relation(fields: [userId], references: [id])
+  userId        String?
+}
+
+enum EnumDatasourceTypeField {
+  Option1
+}
