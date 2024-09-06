@@ -11,23 +11,46 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { ChatMessageCreateNestedManyWithoutThreadsInput } from "./ChatMessageCreateNestedManyWithoutThreadsInput";
+import { FileWhereInput } from "./FileWhereInput";
 import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
 
 @InputType()
-class ThreadCreateInput {
+class FileListRelationFilter {
   @ApiProperty({
     required: false,
-    type: () => ChatMessageCreateNestedManyWithoutThreadsInput,
+    type: () => FileWhereInput,
   })
   @ValidateNested()
-  @Type(() => ChatMessageCreateNestedManyWithoutThreadsInput)
+  @Type(() => FileWhereInput)
   @IsOptional()
-  @Field(() => ChatMessageCreateNestedManyWithoutThreadsInput, {
+  @Field(() => FileWhereInput, {
     nullable: true,
   })
-  chatMessages?: ChatMessageCreateNestedManyWithoutThreadsInput;
-}
+  every?: FileWhereInput;
 
-export { ThreadCreateInput as ThreadCreateInput };
+  @ApiProperty({
+    required: false,
+    type: () => FileWhereInput,
+  })
+  @ValidateNested()
+  @Type(() => FileWhereInput)
+  @IsOptional()
+  @Field(() => FileWhereInput, {
+    nullable: true,
+  })
+  some?: FileWhereInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => FileWhereInput,
+  })
+  @ValidateNested()
+  @Type(() => FileWhereInput)
+  @IsOptional()
+  @Field(() => FileWhereInput, {
+    nullable: true,
+  })
+  none?: FileWhereInput;
+}
+export { FileListRelationFilter as FileListRelationFilter };

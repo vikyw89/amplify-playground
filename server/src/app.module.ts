@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { UserModule } from "./user/user.module";
 import { ThreadModule } from "./thread/thread.module";
+import { ChatMessageModule } from "./chatMessage/chatMessage.module";
+import { FileModule } from "./file/file.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { SecretsManagerModule } from "./providers/secrets/secretsManager.module";
@@ -20,6 +22,8 @@ import { AuthModule } from "./auth/auth.module";
     AuthModule,
     UserModule,
     ThreadModule,
+    ChatMessageModule,
+    FileModule,
     HealthModule,
     PrismaModule,
     SecretsManagerModule,

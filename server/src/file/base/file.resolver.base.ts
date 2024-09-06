@@ -19,32 +19,31 @@ import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
 import * as common from "@nestjs/common";
 import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
-import { Thread } from "./Thread";
-import { ThreadCountArgs } from "./ThreadCountArgs";
-import { ThreadFindManyArgs } from "./ThreadFindManyArgs";
-import { ThreadFindUniqueArgs } from "./ThreadFindUniqueArgs";
-import { CreateThreadArgs } from "./CreateThreadArgs";
-import { UpdateThreadArgs } from "./UpdateThreadArgs";
-import { DeleteThreadArgs } from "./DeleteThreadArgs";
-import { ChatMessageFindManyArgs } from "../../chatMessage/base/ChatMessageFindManyArgs";
+import { File } from "./File";
+import { FileCountArgs } from "./FileCountArgs";
+import { FileFindManyArgs } from "./FileFindManyArgs";
+import { FileFindUniqueArgs } from "./FileFindUniqueArgs";
+import { CreateFileArgs } from "./CreateFileArgs";
+import { UpdateFileArgs } from "./UpdateFileArgs";
+import { DeleteFileArgs } from "./DeleteFileArgs";
 import { ChatMessage } from "../../chatMessage/base/ChatMessage";
-import { ThreadService } from "../thread.service";
+import { FileService } from "../file.service";
 @common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
-@graphql.Resolver(() => Thread)
-export class ThreadResolverBase {
+@graphql.Resolver(() => File)
+export class FileResolverBase {
   constructor(
-    protected readonly service: ThreadService,
+    protected readonly service: FileService,
     protected readonly rolesBuilder: nestAccessControl.RolesBuilder
   ) {}
 
   @graphql.Query(() => MetaQueryPayload)
   @nestAccessControl.UseRoles({
-    resource: "Thread",
+    resource: "File",
     action: "read",
     possession: "any",
   })
-  async _threadsMeta(
-    @graphql.Args() args: ThreadCountArgs
+  async _filesMeta(
+    @graphql.Args() args: FileCountArgs
   ): Promise<MetaQueryPayload> {
     const result = await this.service.count(args);
     return {
@@ -53,27 +52,25 @@ export class ThreadResolverBase {
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.Query(() => [Thread])
+  @graphql.Query(() => [File])
   @nestAccessControl.UseRoles({
-    resource: "Thread",
+    resource: "File",
     action: "read",
     possession: "any",
   })
-  async threads(@graphql.Args() args: ThreadFindManyArgs): Promise<Thread[]> {
-    return this.service.threads(args);
+  async files(@graphql.Args() args: FileFindManyArgs): Promise<File[]> {
+    return this.service.files(args);
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.Query(() => Thread, { nullable: true })
+  @graphql.Query(() => File, { nullable: true })
   @nestAccessControl.UseRoles({
-    resource: "Thread",
+    resource: "File",
     action: "read",
     possession: "own",
   })
-  async thread(
-    @graphql.Args() args: ThreadFindUniqueArgs
-  ): Promise<Thread | null> {
-    const result = await this.service.thread(args);
+  async file(@graphql.Args() args: FileFindUniqueArgs): Promise<File | null> {
+    const result = await this.service.file(args);
     if (result === null) {
       return null;
     }
@@ -81,33 +78,47 @@ export class ThreadResolverBase {
   }
 
   @common.UseInterceptors(AclValidateRequestInterceptor)
-  @graphql.Mutation(() => Thread)
+  @graphql.Mutation(() => File)
   @nestAccessControl.UseRoles({
-    resource: "Thread",
+    resource: "File",
     action: "create",
     possession: "any",
   })
-  async createThread(@graphql.Args() args: CreateThreadArgs): Promise<Thread> {
-    return await this.service.createThread({
+  async createFile(@graphql.Args() args: CreateFileArgs): Promise<File> {
+    return await this.service.createFile({
       ...args,
-      data: args.data,
+      data: {
+        ...args.data,
+
+        chatMessage: args.data.chatMessage
+          ? {
+              connect: args.data.chatMessage,
+            }
+          : undefined,
+      },
     });
   }
 
   @common.UseInterceptors(AclValidateRequestInterceptor)
-  @graphql.Mutation(() => Thread)
+  @graphql.Mutation(() => File)
   @nestAccessControl.UseRoles({
-    resource: "Thread",
+    resource: "File",
     action: "update",
     possession: "any",
   })
-  async updateThread(
-    @graphql.Args() args: UpdateThreadArgs
-  ): Promise<Thread | null> {
+  async updateFile(@graphql.Args() args: UpdateFileArgs): Promise<File | null> {
     try {
-      return await this.service.updateThread({
+      return await this.service.updateFile({
         ...args,
-        data: args.data,
+        data: {
+          ...args.data,
+
+          chatMessage: args.data.chatMessage
+            ? {
+                connect: args.data.chatMessage,
+              }
+            : undefined,
+        },
       });
     } catch (error) {
       if (isRecordNotFoundError(error)) {
@@ -119,17 +130,15 @@ export class ThreadResolverBase {
     }
   }
 
-  @graphql.Mutation(() => Thread)
+  @graphql.Mutation(() => File)
   @nestAccessControl.UseRoles({
-    resource: "Thread",
+    resource: "File",
     action: "delete",
     possession: "any",
   })
-  async deleteThread(
-    @graphql.Args() args: DeleteThreadArgs
-  ): Promise<Thread | null> {
+  async deleteFile(@graphql.Args() args: DeleteFileArgs): Promise<File | null> {
     try {
-      return await this.service.deleteThread(args);
+      return await this.service.deleteFile(args);
     } catch (error) {
       if (isRecordNotFoundError(error)) {
         throw new GraphQLError(
@@ -141,22 +150,23 @@ export class ThreadResolverBase {
   }
 
   @common.UseInterceptors(AclFilterResponseInterceptor)
-  @graphql.ResolveField(() => [ChatMessage], { name: "chatMessages" })
+  @graphql.ResolveField(() => ChatMessage, {
+    nullable: true,
+    name: "chatMessage",
+  })
   @nestAccessControl.UseRoles({
     resource: "ChatMessage",
     action: "read",
     possession: "any",
   })
-  async findChatMessages(
-    @graphql.Parent() parent: Thread,
-    @graphql.Args() args: ChatMessageFindManyArgs
-  ): Promise<ChatMessage[]> {
-    const results = await this.service.findChatMessages(parent.id, args);
+  async getChatMessage(
+    @graphql.Parent() parent: File
+  ): Promise<ChatMessage | null> {
+    const result = await this.service.getChatMessage(parent.id);
 
-    if (!results) {
-      return [];
+    if (!result) {
+      return null;
     }
-
-    return results;
+    return result;
   }
 }

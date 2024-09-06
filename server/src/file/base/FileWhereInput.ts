@@ -11,23 +11,35 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { ChatMessageCreateNestedManyWithoutThreadsInput } from "./ChatMessageCreateNestedManyWithoutThreadsInput";
+import { ChatMessageWhereUniqueInput } from "../../chatMessage/base/ChatMessageWhereUniqueInput";
 import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
+import { StringFilter } from "../../util/StringFilter";
 
 @InputType()
-class ThreadCreateInput {
+class FileWhereInput {
   @ApiProperty({
     required: false,
-    type: () => ChatMessageCreateNestedManyWithoutThreadsInput,
+    type: () => ChatMessageWhereUniqueInput,
   })
   @ValidateNested()
-  @Type(() => ChatMessageCreateNestedManyWithoutThreadsInput)
+  @Type(() => ChatMessageWhereUniqueInput)
   @IsOptional()
-  @Field(() => ChatMessageCreateNestedManyWithoutThreadsInput, {
+  @Field(() => ChatMessageWhereUniqueInput, {
     nullable: true,
   })
-  chatMessages?: ChatMessageCreateNestedManyWithoutThreadsInput;
+  chatMessage?: ChatMessageWhereUniqueInput;
+
+  @ApiProperty({
+    required: false,
+    type: StringFilter,
+  })
+  @Type(() => StringFilter)
+  @IsOptional()
+  @Field(() => StringFilter, {
+    nullable: true,
+  })
+  id?: StringFilter;
 }
 
-export { ThreadCreateInput as ThreadCreateInput };
+export { FileWhereInput as FileWhereInput };

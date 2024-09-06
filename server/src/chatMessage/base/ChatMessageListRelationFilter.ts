@@ -11,35 +11,46 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { ChatMessageListRelationFilter } from "../../chatMessage/base/ChatMessageListRelationFilter";
+import { ChatMessageWhereInput } from "./ChatMessageWhereInput";
 import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
-import { StringFilter } from "../../util/StringFilter";
 
 @InputType()
-class ThreadWhereInput {
+class ChatMessageListRelationFilter {
   @ApiProperty({
     required: false,
-    type: () => ChatMessageListRelationFilter,
+    type: () => ChatMessageWhereInput,
   })
   @ValidateNested()
-  @Type(() => ChatMessageListRelationFilter)
+  @Type(() => ChatMessageWhereInput)
   @IsOptional()
-  @Field(() => ChatMessageListRelationFilter, {
+  @Field(() => ChatMessageWhereInput, {
     nullable: true,
   })
-  chatMessages?: ChatMessageListRelationFilter;
+  every?: ChatMessageWhereInput;
 
   @ApiProperty({
     required: false,
-    type: StringFilter,
+    type: () => ChatMessageWhereInput,
   })
-  @Type(() => StringFilter)
+  @ValidateNested()
+  @Type(() => ChatMessageWhereInput)
   @IsOptional()
-  @Field(() => StringFilter, {
+  @Field(() => ChatMessageWhereInput, {
     nullable: true,
   })
-  id?: StringFilter;
-}
+  some?: ChatMessageWhereInput;
 
-export { ThreadWhereInput as ThreadWhereInput };
+  @ApiProperty({
+    required: false,
+    type: () => ChatMessageWhereInput,
+  })
+  @ValidateNested()
+  @Type(() => ChatMessageWhereInput)
+  @IsOptional()
+  @Field(() => ChatMessageWhereInput, {
+    nullable: true,
+  })
+  none?: ChatMessageWhereInput;
+}
+export { ChatMessageListRelationFilter as ChatMessageListRelationFilter };

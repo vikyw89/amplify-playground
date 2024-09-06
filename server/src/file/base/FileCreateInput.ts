@@ -11,23 +11,23 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { ChatMessageCreateNestedManyWithoutThreadsInput } from "./ChatMessageCreateNestedManyWithoutThreadsInput";
+import { ChatMessageWhereUniqueInput } from "../../chatMessage/base/ChatMessageWhereUniqueInput";
 import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
 
 @InputType()
-class ThreadCreateInput {
+class FileCreateInput {
   @ApiProperty({
     required: false,
-    type: () => ChatMessageCreateNestedManyWithoutThreadsInput,
+    type: () => ChatMessageWhereUniqueInput,
   })
   @ValidateNested()
-  @Type(() => ChatMessageCreateNestedManyWithoutThreadsInput)
+  @Type(() => ChatMessageWhereUniqueInput)
   @IsOptional()
-  @Field(() => ChatMessageCreateNestedManyWithoutThreadsInput, {
+  @Field(() => ChatMessageWhereUniqueInput, {
     nullable: true,
   })
-  chatMessages?: ChatMessageCreateNestedManyWithoutThreadsInput;
+  chatMessage?: ChatMessageWhereUniqueInput | null;
 }
 
-export { ThreadCreateInput as ThreadCreateInput };
+export { FileCreateInput as FileCreateInput };

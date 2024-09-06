@@ -20,7 +20,27 @@ model User {
 }
 
 model Thread {
+  chatMessages ChatMessage[]
+  createdAt    DateTime      @default(now())
+  id           String        @id @default(cuid())
+  updatedAt    DateTime      @updatedAt
+}
+
+model ChatMessage {
   createdAt DateTime @default(now())
+  files     File[]
   id        String   @id @default(cuid())
+  isRead    Boolean?
+  text      String?
+  thread    Thread?  @relation(fields: [threadId], references: [id])
+  threadId  String?
   updatedAt DateTime @updatedAt
+}
+
+model File {
+  chatMessage   ChatMessage? @relation(fields: [chatMessageId], references: [id])
+  chatMessageId String?
+  createdAt     DateTime     @default(now())
+  id            String       @id @default(cuid())
+  updatedAt     DateTime     @updatedAt
 }

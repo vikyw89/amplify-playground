@@ -9,5 +9,25 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class ThreadUpdateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { ChatMessageUpdateManyWithoutThreadsInput } from "./ChatMessageUpdateManyWithoutThreadsInput";
+import { ValidateNested, IsOptional } from "class-validator";
+import { Type } from "class-transformer";
+
+@InputType()
+class ThreadUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: () => ChatMessageUpdateManyWithoutThreadsInput,
+  })
+  @ValidateNested()
+  @Type(() => ChatMessageUpdateManyWithoutThreadsInput)
+  @IsOptional()
+  @Field(() => ChatMessageUpdateManyWithoutThreadsInput, {
+    nullable: true,
+  })
+  chatMessages?: ChatMessageUpdateManyWithoutThreadsInput;
+}
+
 export { ThreadUpdateInput as ThreadUpdateInput };

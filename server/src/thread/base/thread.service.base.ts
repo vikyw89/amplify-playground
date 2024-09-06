@@ -10,7 +10,11 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, Thread as PrismaThread } from "@prisma/client";
+import {
+  Prisma,
+  Thread as PrismaThread,
+  ChatMessage as PrismaChatMessage,
+} from "@prisma/client";
 
 export class ThreadServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -35,5 +39,16 @@ export class ThreadServiceBase {
   }
   async deleteThread(args: Prisma.ThreadDeleteArgs): Promise<PrismaThread> {
     return this.prisma.thread.delete(args);
+  }
+
+  async findChatMessages(
+    parentId: string,
+    args: Prisma.ChatMessageFindManyArgs
+  ): Promise<PrismaChatMessage[]> {
+    return this.prisma.thread
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .chatMessages(args);
   }
 }

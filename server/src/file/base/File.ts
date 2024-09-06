@@ -16,15 +16,15 @@ import { ValidateNested, IsOptional, IsDate, IsString } from "class-validator";
 import { Type } from "class-transformer";
 
 @ObjectType()
-class Thread {
+class File {
   @ApiProperty({
     required: false,
-    type: () => [ChatMessage],
+    type: () => ChatMessage,
   })
   @ValidateNested()
   @Type(() => ChatMessage)
   @IsOptional()
-  chatMessages?: Array<ChatMessage>;
+  chatMessage?: ChatMessage | null;
 
   @ApiProperty({
     required: true,
@@ -51,4 +51,4 @@ class Thread {
   updatedAt!: Date;
 }
 
-export { Thread as Thread };
+export { File as File };
